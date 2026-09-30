@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cybervault-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=False
+      # Use an actual secure base64 string for production in .env, here we provide a fallback for demo
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-bXlfdmVyeV9zZWNyZXRfYWVzX2tleV8zMmJ5dGVzX2I2NA==}
+      - SECRET_KEY=${SECRET_KEY:-changemechangemechangemechangeme}
+      - DATABASE_URL=sqlite:///./cybervault.db
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:80
+    volumes:
+      - ./backend/evidence_storage:/app/evidence_storage
+      - ./backend/cybervault.db:/app/cybervault.db
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cybervault-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always

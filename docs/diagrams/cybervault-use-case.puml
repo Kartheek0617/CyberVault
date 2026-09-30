@@ -1,0 +1,58 @@
+@startuml cybervault-use-case
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrator" as admin
+actor "Investigator" as investigator
+actor "Evidence Custodian" as custodian
+actor "Auditor" as auditor
+
+rectangle "CyberVault System" {
+  usecase "UC-01 Login" as UC1
+  usecase "UC-02 Manage Users" as UC2
+  usecase "UC-03 Manage Cases" as UC3
+  usecase "UC-04 Upload Evidence" as UC4
+  usecase "UC-05 Verify Evidence Integrity" as UC5
+  usecase "UC-06 Transfer Evidence Custody" as UC6
+  usecase "UC-07 Receive Evidence" as UC7
+  usecase "UC-08 View Chain of Custody" as UC8
+  usecase "UC-09 View Audit Logs" as UC9
+  usecase "UC-10 Generate Report" as UC10
+  usecase "UC-11 Sign Report" as UC11
+  usecase "UC-12 Verify Report Signature" as UC12
+}
+
+admin --> UC1
+investigator --> UC1
+custodian --> UC1
+auditor --> UC1
+
+admin --> UC2
+admin --> UC3
+
+investigator --> UC4
+custodian --> UC4
+
+auditor --> UC5
+investigator --> UC5
+
+investigator --> UC6
+custodian --> UC6
+
+investigator --> UC7
+custodian --> UC7
+
+auditor --> UC8
+
+auditor --> UC9
+
+investigator --> UC10
+admin --> UC10
+
+investigator --> UC11
+admin --> UC11
+
+auditor --> UC12
+admin --> UC12
+
+@enduml

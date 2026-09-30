@@ -1,0 +1,52 @@
+@startuml cybervault-security-architecture
+skinparam monochrome true
+title CyberVault Security Architecture
+
+actor "Investigator" as user
+box "Client"
+participant "React Frontend" as frontend
+end box
+
+box "Backend (FastAPI)"
+participant "API Gateway" as api
+participant "Auth Layer (JWT)" as jwt
+participant "RBAC & AuthZ" as rbac
+participant "Input Validation (Pydantic)" as val
+participant "Business Logic" as logic
+participant "Ed25519 Signatures" as sig
+end box
+
+box "Integrity & Storage"
+database "SQLite Database" as db
+participant "SHA-256 Hash" as sha
+participant "AES-256-GCM" as aes
+participant "Encrypted Storage" as disk
+participant "Chain of Custody" as coc
+participant "Audit Hash Chain" as audit
+end box
+
+user -> frontend : Login / Use App
+frontend -> api : REST API Request
+api -> jwt : Validate Token & Extract UUID
+jwt -> rbac : Check RequiresRole()
+rbac -> val : Validate Payloads (MIME, Bounds)
+val -> logic : Process Validated Request
+
+group Evidence Pipeline
+logic -> sha : Generate Integrity Fingerprint
+logic -> aes : Encrypt with Authenticated Tag
+aes -> disk : Store Ciphertext
+end
+
+group Accountability Pipeline
+logic -> coc : Register Owner Transfer
+logic -> audit : Add Event + Hash_N = SHA(Hash_N-1 + Event)
+audit -> db : Persist Audit Link
+end
+
+group Reporting
+logic -> sig : Sign Report Content with Private Key
+sig -> logic : Return Ed25519 Signature
+logic -> db : Store Base64 Signatures
+end
+@enduml

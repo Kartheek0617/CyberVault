@@ -1,0 +1,46 @@
+@startuml cybervault-stride
+skinparam monochrome true
+title STRIDE Threat Model & Mitigations
+
+left to right direction
+
+package "Threat Vectors" {
+  (Spoofing) as S
+  (Tampering) as T
+  (Repudiation) as R
+  (Information Disclosure) as I
+  (Denial of Service) as D
+  (Elevation of Privilege) as E
+}
+
+package "CyberVault Architecture Boundaries" {
+  [Frontend]
+  [API / Auth]
+  [Database]
+  [Evidence Storage]
+  [Audit System]
+}
+
+package "Implemented Mitigations" {
+  [JWT + Argon2id] as M1
+  [SHA-256 + AES-GCM + Validation] as M2
+  [Ed25519 Signatures + Hash Chains] as M3
+  [Error Scrubbing + Encryption] as M4
+  [Rate Limiting (slowapi)] as M5
+  [Context RBAC + IDOR Protection] as M6
+}
+
+S --> [API / Auth]
+T --> [Evidence Storage]
+R --> [Audit System]
+I --> [Database]
+D --> [Frontend]
+E --> [API / Auth]
+
+S --> M1 : Mitigated by
+T --> M2 : Mitigated by
+R --> M3 : Mitigated by
+I --> M4 : Mitigated by
+D --> M5 : Mitigated by
+E --> M6 : Mitigated by
+@enduml

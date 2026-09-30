@@ -1,0 +1,68 @@
+[
+  {
+    "control_id": "SEC-GEN-01",
+    "requirement": "API endpoints must authenticate users.",
+    "risk": "Unauthenticated access to sensitive REST routes.",
+    "control": "JWT Verification Middleware",
+    "implementation": "backend/app/api/auth.py",
+    "test": "tests/test_security_comprehensive.py::test_auth_missing_token",
+    "responsible_role": "ADMIN",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "CSDEMS-6"
+  },
+  {
+    "control_id": "SEC-GEN-02",
+    "requirement": "Users cannot view cases belonging to other investigators unless Admin.",
+    "risk": "IDOR/BOLA resulting in horizontal privilege escalation.",
+    "control": "Context-Bound Authorization Queries",
+    "implementation": "backend/app/api/cases.py",
+    "test": "tests/test_security_comprehensive.py::test_authz_idor_bola",
+    "responsible_role": "INVESTIGATOR",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "Pending Import (IDOR Protection)"
+  },
+  {
+    "control_id": "SEC-EVD-01",
+    "requirement": "Evidence integrity must be protected.",
+    "risk": "Unauthorized evidence modification on disk.",
+    "control": "SHA-256 integrity verification + AES-256-GCM authenticated encryption.",
+    "implementation": "backend/app/security/encryption.py",
+    "test": "tests/test_encryption.py::test_modify_ciphertext_fails",
+    "responsible_role": "SYSTEM",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "CSDEMS-10"
+  },
+  {
+    "control_id": "SEC-EVD-02",
+    "requirement": "Only harmless files may be uploaded.",
+    "risk": "Remote Code Execution (RCE) via shell file injection.",
+    "control": "MIME type, Extension, and Size Validation.",
+    "implementation": "backend/app/security/file_validator.py",
+    "test": "tests/test_security_comprehensive.py::test_file_invalid_mime",
+    "responsible_role": "SYSTEM",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "Pending Import (MIME Constraints)"
+  },
+  {
+    "control_id": "SEC-AUD-01",
+    "requirement": "System actions must be historically verifiable.",
+    "risk": "Unauthorized modification or destruction of audit history.",
+    "control": "Cryptographic Hash-chained audit logs.",
+    "implementation": "backend/app/models/models.py",
+    "test": "tests/test_security_comprehensive.py::test_audit_historical_modification",
+    "responsible_role": "AUDITOR",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "CSDEMS-14"
+  },
+  {
+    "control_id": "SEC-REP-01",
+    "requirement": "Final reports must guarantee origin authenticity.",
+    "risk": "Forged investigation reports.",
+    "control": "Ed25519 Asymmetric Digital Signatures.",
+    "implementation": "backend/app/security/signatures.py",
+    "test": "tests/test_security_comprehensive.py::test_report_modified_rejection",
+    "responsible_role": "INVESTIGATOR",
+    "status": "IMPLEMENTED & VERIFIED",
+    "jira_issue": "Pending Import (Ed25519)"
+  }
+]

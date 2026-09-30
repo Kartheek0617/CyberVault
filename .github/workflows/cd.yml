@@ -1,0 +1,23 @@
+name: CyberVault Continuous Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # Must wait for CI to pass before attempting deployment
+    needs: build-and-test 
+    # (Assuming build-and-test is in a shared workflow or referenced)
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Authenticate to Target Deploy Server
+      # CD EXECUTION REQUIRED - This is a safe deployment template.
+      # No real deployment environment provided.
+      run: |
+        echo "CD EXECUTION REQUIRED. Deployment mocked."
+        # ssh -i ${{ secrets.DEPLOY_KEY }} user@${{ secrets.PROD_SERVER }} 'bash deploy.sh'

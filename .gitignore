@@ -1,0 +1,49 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Node
+node_modules/
+.npm
+npm-debug.log*
+
+# Storage
+uploads/
+storage/
+evidence_storage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Keys (never commit real keys)
+*.pem
+*.key
+private_key.pem
+public_key.pem
+*.db 
+*.db 
+*.db 

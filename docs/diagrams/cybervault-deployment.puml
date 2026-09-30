@@ -1,0 +1,42 @@
+@startuml cybervault-deployment
+skinparam monochrome true
+title CyberVault Deployment Architecture
+
+actor "Developer" as dev
+node "GitHub" as github {
+  card "Source Code"
+  card "CI/CD Actions"
+}
+
+node "Local / Staging Environment" as staging {
+  package "Docker Compose" {
+    node "Frontend Container" {
+      component "React App (Nginx)" as react
+    }
+    node "Backend Container" {
+      component "FastAPI (Uvicorn)" as fastapi
+      database "cybervault.db" as sql
+    }
+  }
+}
+
+node "Production Environment" as prod {
+  card "Not executed — no production environment" as no_prod
+}
+
+folder "Volumes" {
+  folder "Evidence Storage (Encrypted)" as e_store
+  folder "Database Store" as d_store
+}
+
+dev --> github : Git Push
+github --> staging : Docker Build (Testing/Staging)
+github ..> prod : CD Deployment (Blocked)
+
+react <--> fastapi : JSON APIs
+fastapi <--> sql : SQLAlchemy
+fastapi <--> e_store : Read/Write Ciphertexts
+sql <--> d_store : SQLite File
+
+note right of prod : CD configured but target is unavailable
+@enduml

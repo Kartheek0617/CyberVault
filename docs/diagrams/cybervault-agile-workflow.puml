@@ -1,0 +1,38 @@
+@startuml cybervault-agile-workflow
+skinparam monochrome true
+title Agile Software Engineering Workflow (Jira Equivalent)
+
+object "Product Backlog" as pb
+object "Epic" as epic
+object "User Story" as story
+object "Acceptance Criteria" as ac
+
+object "Sprint Planning" as planning
+object "Sprint Backlog" as sb
+
+object "Development" as dev
+object "Security Testing" as tests
+object "Definition of Done (DoD)" as dod
+
+object "Sprint Review" as review
+object "Retrospective" as retro
+
+pb --> epic
+epic --> story
+story --> ac
+
+story --> planning
+planning --> sb
+
+sb --> dev
+dev --> tests
+tests --> dod
+dod --> review
+review --> retro
+retro --> pb : Refinement
+
+note right of pb
+Jira Execution Unavailable
+(No authenticated connector mapping exists)
+end note
+@enduml

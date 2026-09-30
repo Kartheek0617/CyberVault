@@ -1,0 +1,101 @@
+@startuml cybervault-er
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&link-intact></color> <i>x</i>
+!define column(x) <color:#efefef>x</color>
+!define table(x) entity x << (T, white) >>
+
+hide circle
+skinparam linetype ortho
+skinparam EntityBackgroundColor #25283d
+skinparam EntityBorderColor #8f94a3
+skinparam EntityFontColor white
+skinparam DefaultFontName Arial
+
+entity "User" {
+  primary_key(id): UUID
+  column(username): String
+  column(email): String
+  column(password_hash): String
+  column(role): Enum
+}
+
+entity "Case" {
+  primary_key(id): UUID
+  column(case_number): String
+  column(title): String
+  foreign_key(created_by_id): UUID
+}
+
+entity "CaseMember" {
+  primary_key(id): UUID
+  foreign_key(case_id): UUID
+  foreign_key(user_id): UUID
+}
+
+entity "Evidence" {
+  primary_key(id): UUID
+  column(evidence_number): String
+  foreign_key(case_id): UUID
+  foreign_key(uploaded_by_id): UUID
+  foreign_key(current_custodian_id): UUID
+  column(storage_filename): String
+  column(sha256_hash): String
+  column(encryption_nonce): String
+  column(is_encrypted): Boolean
+}
+
+entity "ChainOfCustody" {
+  primary_key(id): UUID
+  foreign_key(evidence_id): UUID
+  foreign_key(case_id): UUID
+  foreign_key(actor_id): UUID
+  column(action): Enum
+  column(event_hash): String
+}
+
+entity "AuditLog" {
+  primary_key(id): UUID
+  column(sequence_number): Integer
+  foreign_key(user_id): UUID
+  column(action): Enum
+  column(current_hash): String
+}
+
+entity "Report" {
+  primary_key(id): UUID
+  foreign_key(case_id): UUID
+  foreign_key(generated_by_id): UUID
+  column(report_hash): String
+}
+
+entity "DigitalSignature" {
+  primary_key(id): UUID
+  foreign_key(report_id): UUID
+  foreign_key(signer_id): UUID
+  column(signature_hex): Text
+  column(public_key_hex): Text
+}
+
+entity "SecurityEvent" {
+  primary_key(id): UUID
+  column(event_type): String
+  column(severity): String
+}
+
+User "1" -- "0..*" Case : creates
+User "1" -- "0..*" CaseMember : is member of
+Case "1" -- "0..*" CaseMember : has members
+Case "1" -- "0..*" Evidence : contains
+User "1" -- "0..*" Evidence : uploads
+User "1" -- "0..*" Evidence : holds custody of
+Evidence "1" -- "0..*" ChainOfCustody : logged in
+User "1" -- "0..*" ChainOfCustody : performs
+Case "1" -- "0..*" ChainOfCustody : associated with
+User "1" -- "0..*" AuditLog : triggers
+Case "1" -- "0..*" Report : generates
+User "1" -- "0..*" Report : creates
+Report "1" -- "1" DigitalSignature : signed by
+User "1" -- "0..*" DigitalSignature : signing key owner
+User "1" -- "0..*" SecurityEvent : triggers (optional)
+
+@enduml

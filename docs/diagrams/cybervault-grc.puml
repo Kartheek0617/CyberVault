@@ -1,0 +1,30 @@
+@startuml cybervault-grc
+skinparam monochrome true
+title CyberVault GRC Traceability Logic
+
+package "Governance & Risk" {
+  [Requirement\n(e.g., Protect Evidence)] as req
+  [Risk\n(e.g., Tampering)] as risk
+  [Security Control\n(e.g., AES-GCM + SHA-256)] as control
+}
+
+package "Compliance & Execution" {
+  [Implementation\n(backend/app/security/encryption.py)] as impl
+  [Automated Test\n(test_encryption.py)] as test
+  [Evidence\n(Pytest Pass / Logs)] as evd
+}
+
+package "Oversight" {
+  [Responsible Role\n(Auditor / System)] as role
+  [Compliance Status\n(IMPLEMENTED & VERIFIED)] as status
+}
+
+req --> risk : Identifies
+risk --> control : Mitigated by
+control --> impl : Engineered as
+impl --> test : Verified by
+test --> evd : Generates
+evd --> status : Justifies
+
+role --> status : Reviews
+@enduml

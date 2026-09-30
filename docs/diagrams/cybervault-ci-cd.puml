@@ -1,0 +1,26 @@
+@startuml cybervault-ci-cd
+skinparam monochrome true
+title CyberVault CI/CD Pipeline
+
+actor "Developer" as dev
+participant "Git" as git
+participant "GitHub Actions (CI)" as ci
+participant "Pytest Suite" as tests
+participant "Docker Build" as build
+participant "GitHub Actions (CD)" as cd
+participant "Deployment Target" as deploy
+
+dev -> git : Git Push
+git -> ci : Trigger Workflow check
+ci -> ci : Dependency Installation
+ci -> tests : Execute Security Tests
+tests --> ci : 31 Tests Passed (0 Failed)
+
+ci -> build : Build Docker Image
+build --> ci : Image Ready
+
+ci -> cd : Trigger CD pipeline
+note right of cd : Not executed (Blocked)
+cd -> deploy : Deploy Target Unavailable
+
+@enduml

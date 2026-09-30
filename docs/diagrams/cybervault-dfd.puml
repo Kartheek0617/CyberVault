@@ -1,0 +1,59 @@
+@startuml cybervault-dfd
+!define ENTITY rectangle
+!define PROCESS circle
+!define STORE database
+
+skinparam defaultFontName Arial
+skinparam rectangleBackgroundColor #d9e2ec
+skinparam circleBackgroundColor #b6cefc
+skinparam databaseBackgroundColor #fce4b6
+
+ENTITY "Investigator / Custodian" as investigator
+ENTITY "Auditor" as auditor
+ENTITY "Administrator" as admin
+
+PROCESS "1.0 Authentication\nService" as p1
+PROCESS "2.0 Case\nManagement" as p2
+PROCESS "3.0 Evidence\nEncryption & Upload" as p3
+PROCESS "4.0 Chain of Custody\n& Audit Service" as p4
+PROCESS "5.0 Reporting &\nSignatures" as p5
+
+STORE "User DB" as d1
+STORE "Case DB" as d2
+STORE "Audit\n& Custody Ledger" as d3
+STORE "Encrypted Storage\n(AES-GCM)" as d4
+STORE "Evidence\nMetadata" as d5
+
+' Flow: Auth
+investigator --> p1 : Credentials
+admin --> p1 : Credentials
+p1 <--> d1 : Verifies Hash
+p1 --> investigator : JWT
+p1 --> admin : JWT
+
+' Flow: Cases
+admin --> p2 : Assigns Case (JWT)
+p2 <--> d2 : Reads/Writes `CaseMember`
+
+' Flow: Evidence Upload
+investigator --> p3 : Raw File + Case ID (JWT)
+p3 <-- d2 : Validates AuthZ
+p3 --> p3 : Validates MIME & \nSHA-256 Hash
+p3 --> p3 : Encrypts Dataset
+p3 --> d4 : Writes ciphertext (.enc)
+p3 --> d5 : Writes metadata &\nCrypto Params
+p3 --> p4 : Emits Upload Event
+
+' Flow: Chain of Custody / Audit
+p4 --> d3 : Logs Hash-Chained Action
+auditor --> p4 : Requests Verification
+p4 <-- d3 : Recomputes hash chain
+
+' Flow: Reports
+investigator --> p5 : Generates JSON Report
+p5 <-- d2 : Fetches Case
+p5 <-- d5 : Fetches Metadata
+p5 --> p5 : Signs with Ed25519
+p5 --> investigator : Confirms Signature
+
+@enduml
