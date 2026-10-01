@@ -47,3 +47,8 @@ public_key.pem
 *.db 
 *.db 
 *.db 
+
+# Local Jira exports/import payloads
+docs/jira/current_jira.csv
+docs/jira/jira_import_payload.csv
+docs/jira/jira_import_step1_epic.csv
