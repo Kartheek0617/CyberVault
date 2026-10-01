@@ -36,6 +36,11 @@ jobs:
         echo "SECRET_KEY=$(openssl rand -hex 64)" >> $GITHUB_ENV
         echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> $GITHUB_ENV
 
+    - name: Initialize CI Database
+      working-directory: ./backend
+      run: |
+        python scripts/seed.py
+
     - name: Run Backend Pytest (Security Regression)
       working-directory: ./backend
       run: |
