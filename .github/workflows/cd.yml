@@ -3,21 +3,39 @@ name: CyberVault Continuous Deployment
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   deploy:
+    name: Deployment Simulation
     runs-on: ubuntu-latest
-    
-    # Must wait for CI to pass before attempting deployment
-    needs: build-and-test 
-    # (Assuming build-and-test is in a shared workflow or referenced)
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-    - name: Authenticate to Target Deploy Server
-      # CD EXECUTION REQUIRED - This is a safe deployment template.
-      # No real deployment environment provided.
+    - name: Validate Deployment Package
       run: |
-        echo "CD EXECUTION REQUIRED. Deployment mocked."
-        # ssh -i ${{ secrets.DEPLOY_KEY }} user@${{ secrets.PROD_SERVER }} 'bash deploy.sh'
+        echo "Validating CyberVault deployment package..."
+        test -f backend/requirements.txt
+        test -f frontend/package.json
+        test -f .github/workflows/ci.yml
+        test -f .github/workflows/security-tests.yml
+        echo "Deployment package validation successful."
+
+    - name: Deployment Simulation
+      run: |
+        echo "========================================"
+        echo "CyberVault CD Pipeline"
+        echo "========================================"
+        echo "Environment: simulated"
+        echo "Branch: main"
+        echo "Deployment target: not configured"
+        echo "Application deployment simulation successful."
+        echo "========================================"
+
+    - name: Deployment Summary
+      run: |
+        echo "CyberVault deployment pipeline completed."
+        echo "No production server was contacted."
+        echo "No production credentials were used."
